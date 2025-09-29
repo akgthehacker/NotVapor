@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/defaults.css" />
+    <script src="/scripts/theme.js"></script>
+    
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Inter", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text-color);
+        overflow: hidden;
+      }
+      #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -99;
+      }
+
+      .dashboard-container {
+        width: 50%;
+        height: 100%;
+        margin: 0 auto;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--secondary-bg);
+      }
+      .dashboard-container::-webkit-scrollbar { width: 8px; }
+      .dashboard-container::-webkit-scrollbar-track { background: var(--secondary-bg); }
+      .dashboard-container::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+      .sections-wrapper {
+        padding: 40px 20px;
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 50%;
+      }
+
+      .card {
+        background-color: var(--secondary-bg);
+        border-radius: 12px;
+        padding: 20px;
+        height: auto;
+        opacity: 0;
+        animation: fadeInOnly 0.4s ease forwards;
+      }
+
+      @keyframes fadeInOnly {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      .card-label {
+        margin: 0;
+        text-transform: uppercase;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.75);
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-label > i { font-size: 12px; }
+
+      .list-container {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .scrollable-list {
+        max-height: 126px;
+        overflow-y: auto;
+        padding-right: 5px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--secondary-bg);
+      }
+      .scrollable-list::-webkit-scrollbar { width: 4px; }
+      .scrollable-list::-webkit-scrollbar-track { background: transparent; }
+      .scrollable-list::-webkit-scrollbar-thumb { background: var(--third-bg); border-radius: 2px; }
+
+      .game-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: var(--button-bg);
+        color: var(--text-color);
+        font-family: "Inter", sans-serif;
+        font-size: 15px;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+      .quick-actions-card .game-button { padding: 12px 8px; }
+      .game-button:hover { background-color: var(--button-hover); transform: scale(1.02); }
+      .game-button img.icon { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+      .quick-actions-card .game-button i.icon { width: 32px; flex-shrink: 0; text-align: center; font-size: 16px; color: var(--primary); }
+      
+      .empty-list-text {
+        color: var(--secondary-text-color);
+        text-align: center;
+        font-size: 14px;
+        font-style: italic;
+        padding: 10px 0;
+      }
+
+      .stats-container {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .stat-item { font-size: 15px; color: var(--secondary-text-color); }
+      .stat-item span { font-weight: 600; color: var(--text-color); font-family: "SF Mono", "Consolas", monospace; }
+      
+      .online-users-card .count {
+        font-family: "SF Mono", "Consolas", "Roboto Mono", monospace;
+        font-size: 52px;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 10px 0 0 0;
+        line-height: 1;
+      }
+
+      .dice-container {
+        margin: 20px auto 10px;
+        width: 50px;
+        height: 50px;
+        perspective: 1000px;
+        cursor: pointer;
+      }
+      .dice {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: drift 15s ease-in-out infinite alternate;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+      }
+      .dice.spinning { animation: spin-fast 3s ease-in-out; }
+      .dice-face {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .dot-grid {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+      }
+      .dot { background-color: var(--bg); border-radius: 50%; width: 8px; height: 8px; align-self: center; justify-self: center; }
+      .face-1 .dot:nth-child(1) { grid-area: 2 / 2; }
+      .face-2 .dot:nth-child(1) { grid-area: 1 / 1; } .face-2 .dot:nth-child(2) { grid-area: 3 / 3; }
+      .face-3 .dot:nth-child(1) { grid-area: 1 / 1; } .face-3 .dot:nth-child(2) { grid-area: 2 / 2; } .face-3 .dot:nth-child(3) { grid-area: 3 / 3; }
+      .face-4 .dot:nth-child(1) { grid-area: 1 / 1; } .face-4 .dot:nth-child(2) { grid-area: 1 / 3; } .face-4 .dot:nth-child(3) { grid-area: 3 / 1; } .face-4 .dot:nth-child(4) { grid-area: 3 / 3; }
+      .face-5 .dot:nth-child(1) { grid-area: 1 / 1; } .face-5 .dot:nth-child(2) { grid-area: 1 / 3; } .face-5 .dot:nth-child(3) { grid-area: 2 / 2; } .face-5 .dot:nth-child(4) { grid-area: 3 / 1; } .face-5 .dot:nth-child(5) { grid-area: 3 / 3; }
+      .face-6 .dot:nth-child(1) { grid-area: 1 / 1; } .face-6 .dot:nth-child(2) { grid-area: 1 / 3; } .face-6 .dot:nth-child(3) { grid-area: 3 / 1; } .face-6 .dot:nth-child(4) { grid-area: 3 / 3; }
+      
+      .face-front  { transform: rotateY(0deg) translateZ(25px); }
+      .face-back   { transform: rotateY(180deg) translateZ(25px); }
+      .face-right  { transform: rotateY(90deg) translateZ(25px); }
+      .face-left   { transform: rotateY(-90deg) translateZ(25px); }
+      .face-top    { transform: rotateX(90deg) translateZ(25px); }
+      .face-bottom { transform: rotateX(-90deg) translateZ(25px); }
+
+      @keyframes drift { 0% { transform: rotateX(20deg) rotateY(-30deg); } 50% { transform: rotateX(-15deg) rotateY(40deg); } 100% { transform: rotateX(25deg) rotateY(-10deg); } }
+      @keyframes spin-fast { from { transform: rotateX(0deg) rotateY(0deg); } to { transform: rotateX(1440deg) rotateY(1080deg); } }
+      
+      .status-indicator { width: 10px; height: 10px; border-radius: 50%; position: relative; }
+      .status-indicator::after { content: ''; position: absolute; inset: 0; border-radius: 50%; animation: pulse 1.5s infinite; background-color: inherit; }
+      .status-indicator.ok { background-color: #4CAF50; }
+      .status-indicator.degraded { background-color: #FFC107; }
+      .status-indicator.outage { background-color: #F44336; }
+      @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
+      
+      .text-item { display: flex; flex-direction: column; }
+      .text-item .name { font-weight: 600; font-size: 15px; }
+      .text-item .desc { font-size: 14px; color: var(--secondary-text-color); }
+      .text-item .date { font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; margin-top: 4px; }
+      .text-list-container { gap: 10px; }
+    </style>
+  </head>
+  <body>
+    <div id="particles-js"></div>
+
+    <div class="dashboard-container">
+      <div class="sections-wrapper">
+        <div class="column" id="column-left"></div>
+        <div class="column" id="column-right"></div>
+      </div>
+    </div>
+
+    <div id="card-templates" style="display: none;">
+      <div class="card online-users-card">
+        <p class="card-label"><i class="fa-solid fa-users"></i> Online Users</p>
+        <p class="count" id="online-users-count">...</p>
+      </div>
+      <div class="card stats-card">
+        <p class="card-label"><i class="fa-solid fa-chart-simple"></i> Stats</p>
+        <div class="stats-container">
+            <p class="stat-item">Total Games: <span id="stats-total-games">...</span></p>
+            <p class="stat-item">Total Accounts: <span id="stats-total-accounts">0</span></p>
+        </div>
+      </div>
+       <div class="card top-games-card">
+        <p class="card-label"><i class="fa-solid fa-trophy"></i> Top Games</p>
+        <div class="list-container" id="top-games-list"></div>
+      </div>
+       <div class="card favorites-card">
+          <p class="card-label"><i class="fa-solid fa-star"></i> Your Favorites</p>
+          <div class="list-container" id="favorites-list"></div>
+      </div>
+      <div class="card recent-games-card">
+          <p class="card-label"><i class="fa-solid fa-clock-rotate-left"></i> Recently Played</p>
+          <div class="list-container" id="recently-played-list"></div>
+      </div>
+      <div class="card random-game-card">
+        <p class="card-label"><i class="fa-solid fa-shuffle"></i> Random Game</p>
+        <div class="dice-container" id="dice-container">
+          <div class="dice" id="dice">
+            <div class="dice-face face-front"><div class="dot-grid face-1"><div class="dot"></div></div></div>
+            <div class="dice-face face-back"><div class="dot-grid face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="dice-face face-right"><div class="dot-grid face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="dice-face face-left"><div class="dot-grid face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="dice-face face-top"><div class="dot-grid face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="dice-face face-bottom"><div class="dot-grid face-2"><div class="dot"></div><div class="dot"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card status-card">
+        <p class="card-label"><span id="status-indicator" class="status-indicator"></span> Status</p>
+        <div class="list-container text-list-container" id="status-list"></div>
+      </div>
+       <div class="card updates-card">
+          <p class="card-label"><i class="fa-solid fa-bullhorn"></i> Updates</p>
+          <div class="list-container text-list-container" id="updates-list"></div>
+      </div>
+      <div class="card quick-actions-card">
+          <p class="card-label"><i class="fa-solid fa-bolt"></i> Quick Actions</p>
+          <div class="list-container" id="quick-actions-list"></div>
+      </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/scripts/particle.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const htmlURL = "https://cdn.jsdelivr.net/gh/gn-math/html@main";
+        const coverURL = "https://cdn.jsdelivr.net/gh/gn-math/covers@main";
+
+        const cardTemplates = document.getElementById('card-templates');
+        const leftCol = document.getElementById('column-left');
+        const rightCol = document.getElementById('column-right');
+        const cards = Array.from(cardTemplates.children);
+
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${(index + 1) * 0.1}s`;
+            if (index % 2 === 0) { leftCol.appendChild(card); } 
+            else { rightCol.appendChild(card); }
+        });
+
+        function getParentFrame() { return window.parent.document.getElementById('frame'); }
+        function navigateParentFrame(url) { const frame = getParentFrame(); if (frame) frame.src = url; }
+        function getFromStorage(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch (e) { return []; } }
+
+        const userCountElement = document.getElementById("online-users-count");
+        if (window.parent && window.parent.vaporsock) {
+          userCountElement.textContent = window.parent.vaporsock.onlineusers;
+          window.parent.addEventListener('vaporsock:update', (event) => { userCountElement.textContent = event.detail.onlineUsers; });
+        } else { userCountElement.textContent = "N/A"; }
+
+        let allGamesCache = null;
+        async function getAllGames() {
+          if (allGamesCache) return allGamesCache;
+          try {
+            const response = await fetch('/_a/zones.json');
+            allGamesCache = await response.json();
+            return allGamesCache;
+          } catch (e) { return []; }
+        }
+
+        function createGameButton(game) {
+            const button = document.createElement('button');
+            button.className = 'game-button';
+            const coverSrc = game.cover ? game.cover.replace("{COVER_URL}", coverURL) : '/_a/logo.png';
+            button.innerHTML = `<img src="${coverSrc}" class="icon" alt=""><span class="game-name">${game.name}</span>`;
+            button.onclick = () => {
+                let url = game.direct ? `/page/gameframe.html?url=${encodeURIComponent(game.url)}&name=${encodeURIComponent(game.name)}&direct=true` : `/page/gameframe.html?url=${encodeURIComponent(game.url.replace("{HTML_URL}", htmlURL))}&name=${encodeURIComponent(game.name)}`;
+                navigateParentFrame(url);
+            };
+            return button;
+        }
+
+        const topGamesList = document.getElementById("top-games-list");
+        async function fetchAndDisplayTopGames(allGames) {
+            const featuredGames = allGames.filter(g => g.featured).slice(0, 4);
+            topGamesList.innerHTML = '';
+            if (featuredGames.length === 0) { topGamesList.innerHTML = `<p class="empty-list-text">No top games found.</p>`; return; }
+            featuredGames.forEach(game => topGamesList.appendChild(createGameButton(game)));
+        }
+
+        const favoritesList = document.getElementById("favorites-list");
+        function displayFavorites(allGames) {
+            const favoriteNames = getFromStorage('favoriteGames');
+            favoritesList.innerHTML = '';
+            if (favoriteNames.length === 0) { favoritesList.innerHTML = `<p class="empty-list-text">You haven't favorited any games yet.</p>`; return; }
+            if (favoriteNames.length > 3) { favoritesList.classList.add('scrollable-list'); }
+            const favoriteGameObjects = allGames.filter(game => favoriteNames.includes(game.name));
+            favoriteGameObjects.forEach(game => favoritesList.appendChild(createGameButton(game)));
+        }
+
+        const recentlyPlayedList = document.getElementById("recently-played-list");
+        function displayRecentlyPlayed(allGames) {
+            const recentGameInfo = getFromStorage('recentlyPlayed').slice(0, 4);
+            recentlyPlayedList.innerHTML = '';
+            if (recentGameInfo.length === 0) { recentlyPlayedList.innerHTML = `<p class="empty-list-text">No recently played games.</p>`; return; }
+            recentGameInfo.forEach(game => recentlyPlayedList.appendChild(createGameButton(game)));
+        }
+
+        const quickActionsList = document.getElementById("quick-actions-list");
+        function displayQuickActions() {
+            const actions = [
+              { name: 'Settings', icon: 'fa-solid fa-gear', url: '/page/options.html' },
+              { name: 'Our Discord', icon: 'fa-brands fa-discord', url: 'https://dsc.gg/vaporr', external: true },
+              { name: 'Partners', icon: 'fa-solid fa-handshake', url: '/page/partners.html' }
+            ];
+            quickActionsList.innerHTML = '';
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'game-button';
+                button.innerHTML = `<i class="${action.icon} icon"></i><span>${action.name}</span>`;
+                button.onclick = () => {
+                  if (action.external) { window.open(action.url, '_blank'); } 
+                  else { navigateParentFrame(action.url); }
+                };
+                quickActionsList.appendChild(button);
+            });
+        }
+        
+        function animateCountUp(element, target) {
+            let count = 0;
+            const step = () => {
+                const increment = Math.max(1, (target - count) * 0.05);
+                count += increment;
+                if (count < target) { element.textContent = Math.ceil(count).toLocaleString(); requestAnimationFrame(step); } 
+                else { element.textContent = target.toLocaleString() + "+"; }
+            };
+            requestAnimationFrame(step);
+        }
+
+        function displayStats(allGames) {
+            document.getElementById('stats-total-games').textContent = allGames.length;
+            animateCountUp(document.getElementById('stats-total-accounts'), 2400);
+        }
+
+        const diceContainer = document.getElementById('dice-container');
+        const dice = document.getElementById('dice');
+        diceContainer.addEventListener('click', async () => {
+            if (dice.classList.contains('spinning')) return;
+            const allGames = await getAllGames();
+            if (allGames.length === 0) return;
+            dice.classList.add('spinning');
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * allGames.length);
+                const randomGame = allGames[randomIndex];
+                createGameButton(randomGame).click();
+                dice.classList.remove('spinning');
+            }, 3000);
+        });
+        
+        const statusList = document.getElementById("status-list");
+        const statusIndicator = document.getElementById("status-indicator");
+        async function fetchAndDisplayStatus() {
+          try {
+            const response = await fetch('/_a/status.json');
+            const statusData = await response.json();
+            const outages = statusData.current_outages || [];
+            statusList.innerHTML = '';
+            statusIndicator.className = 'status-indicator';
+            if (outages.length === 0) {
+              statusIndicator.classList.add('ok');
+              statusList.innerHTML = `<p class="empty-list-text">No current outages!</p>`;
+            } else {
+              if (outages.length === 1) statusIndicator.classList.add('degraded');
+              if (outages.length >= 2) statusIndicator.classList.add('outage');
+              outages.forEach(outage => {
+                const item = document.createElement('div');
+                item.className = 'text-item';
+                item.innerHTML = `<span class="name">${outage.name}</span><span class="desc">${outage.description}</span><span class="date">${outage.date}</span>`;
+                statusList.appendChild(item);
+              });
+            }
+          } catch(error) { statusList.innerHTML = `<p class="empty-list-text">Could not load status.</p>`; }
+        }
+
+        const updatesList = document.getElementById("updates-list");
+        async function fetchAndDisplayUpdates() {
+          try {
+            const response = await fetch('/_a/updates.json');
+            const updates = await response.json();
+            updatesList.innerHTML = '';
+            if (!updates || updates.length === 0) { updatesList.innerHTML = `<p class="empty-list-text">No recent updates.</p>`; return; }
+            updates.slice(0, 3).forEach(update => {
+              const item = document.createElement('div');
+              item.className = 'text-item';
+              item.innerHTML = `<span class="name">${update.name}</span><span class="desc">${update.description}</span><span class="date">${update.date}</span>`;
+              updatesList.appendChild(item);
+            });
+          } catch(error) { updatesList.innerHTML = `<p class="empty-list-text">Could not load updates.</p>`; }
+        }
+        
+        async function initializeDashboard() {
+            const allGames = await getAllGames();
+            displayStats(allGames);
+            fetchAndDisplayTopGames(allGames);
+            displayFavorites(allGames);
+            displayRecentlyPlayed(allGames);
+            displayQuickActions();
+            fetchAndDisplayStatus();
+            fetchAndDisplayUpdates();
+        }
+
+        initializeDashboard();
+      });
+    </script>
+  </body>
+</html>
