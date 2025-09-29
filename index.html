@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<!--
+vapor v3.8/2
+-->
+<html lang="en">
+  <head>
+
+    <script src="/sock/online/index.js"></script>
+
+    <script>
+      const splashTexts = [
+        "lights peed",
+        "tech is weird",
+        "this is not a splash text",
+        "vapor > interstellar",
+        "vapor is the best",
+        "loadinging",
+        "evicly is based",
+        "8080 is the best port",
+        "3000 is the best port",
+        "67....", // bro..
+        "javascript sucks",
+        "gatekeep this fr",
+        "no vibecoding here",
+        "dont check the vm!",
+        "free ram (not clickbait)",
+        "filters can’t stop me",
+        "one more game, i swear",
+        "i put the fun in dysfunctional",
+        "spaghetti code incoming",
+        "school wifi too slow for epic loot",
+        "shh… teacher not looking",
+        "high score, low GPA", // peak one right here
+      ];
+
+      const randomIndex = Math.floor(Math.random() * splashTexts.length);
+      window.addEventListener("DOMContentLoaded", () => {
+        const textEl = document.getElementById("loader-text");
+        if (textEl) textEl.innerHTML = splashTexts[randomIndex];
+      });
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("loader-overlay");
+        if (!loader) return;
+
+        const minTime = 350;
+        const start = Date.now();
+
+        loader.style.opacity = "1";
+        loader.style.transition = "opacity 0.27s ease";
+
+        const fadeOut = () => {
+          const elapsed = Date.now() - start;
+          const remaining = Math.max(minTime - elapsed, 0);
+
+          setTimeout(() => {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.remove(), 270);
+          }, remaining);
+        };
+
+        fadeOut();
+      });
+    </script>
+
+    <script src="/scripts/opt.js"></script>
+    <script src="/scripts/theme.js"></script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VĀPŌR v3</title>
+
+    <link href="/styles/defaults.css" rel="stylesheet" />
+    <link href="/styles/index.css" rel="stylesheet" />
+    <link href="/styles/sidebar.css" rel="stylesheet" />
+
+    <link rel="icon" href="/_a/logo.new.png" type="image/x-icon" />
+
+    <!-- google analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-TWLB9ZV0LR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-TWLB9ZV0LR");
+    </script>
+
+    <!-- SEO Meta -->
+    <meta name="title" content="☄️ VAPOR v3" />
+    <meta name="description" content="Your #1 destination for unblōcking." />
+    <meta
+      name="keywords"
+      content="games, pr0xy, vm, virtual machine, movies, emulators, ai, fun, unbl0ck, unbl0cked" />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="English" />
+    <meta name="author" content="technonyte" />
+
+    <!-- shut up google-->
+    <link rel="canonical" href="https://vapor.my/" />
+
+    <!-- Discord embed -->
+    <meta property="og:title" content="☄️ VAPOR v3" />
+    <meta name="theme-color" content="#49517c" />
+    <meta name="msapplication-TileColor" content="#49517c" />
+    <meta property="og:image" content="/_a/logo.png" />
+    <meta
+      property="og:description"
+      content="Your #1 destination for unblōcking." />
+
+    <style>
+      .quote-line {
+        border-left: 2px solid rgba(255,255,255,0.3);
+        padding-left: 12px;
+        display: inline-block;
+        line-height: 1.5em;
+      }
+
+      .modal-icon {
+        vertical-align: middle;
+        height: 1.6em;
+        margin-right: 4px;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loader-overlay">
+      <div style="display: flex; align-items: center; gap: 0.75rem">
+        <div class="loader-spinner"></div>
+        <div id="loader-text" style="font-size: 0.9rem; opacity: 1">...</div>
+      </div>
+    </div>
+
+    <nav class="sidebar">
+      <div class="nav-top" id="nav-top-container">
+        <div id="nav-items"></div>
+        <div id="nav-items-extras"></div>
+        <div id="nav-items-nest"></div>
+      </div>
+
+      <div class="nav-bottom">
+        <!--
+        <div class="premium-container">
+          <div class="shine"></div>
+          <span class="premium-title">VAPOR PLUS</span>
+          <span class="premium-subtitle"
+            >Get access to exclusive features! (Coming Soon)</span
+          >
+        </div>
+        -->
+        <div class="quick-actions">
+          <a class="quick-action-btn extras-btn"><i class="fa-solid fa-ellipsis"></i> Extras</a>
+          <a class="quick-action-btn settings-btn"><i class="fa-regular fa-cog"></i> Settings</a>
+        </div>
+
+        <a class="nav-item">
+          <div class="icon-container">
+            <img src="/_a/logo.new.png" style="width: 30px" />
+          </div>
+          <span class="nav-text" style="margin-left: 0px">
+            VAPOR v3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<span id="commit-id"
+              >abcdefg</span
+            >
+          </span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="overlay"></div>
+
+    <div class="content">
+      <iframe id="frame" src="/page/home.html"></iframe>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay"></div>
+
+    <div id="main-modal" class="main-modal">
+      <div class="modal-content">
+        <h2 class="modal-title">
+          <span id="main-modal-icon-container"></span>
+          <span id="main-modal-title"></span>
+        </h2>
+        <p class="modal-body" id="main-modal-body"></p>
+        <button id="main-modal-close" class="modal-button"></button>
+      </div>
+    </div>
+
+    <div id="dyn-modal" class="main-modal">
+      <div class="modal-content">
+        <h2 class="modal-title">
+            <span id="dyn-modal-icon-container"></span>
+            <span id="dyn-modal-title"></span>
+        </h2>
+        <p class="modal-body" id="dyn-modal-body"></p>
+        <button id="dyn-modal-close" class="modal-button"></button>
+      </div>
+    </div>
+
+    <script src="scripts/navi.js"></script>
+    <script src="scripts/navigation.js"></script>
+    <script src="scripts/commit.js"></script>
+
+    <script>
+      const mainModalConfig = {
+        icon: "/_a/logo.new.png",
+        title: "VAPOR 3.8/5",
+        content: "🦾 New AI Chatbot!\nClaude, Gemini, and more 🤖\n\n💬 New Chat\nThis chat is temporary, big things soon 👀\n\n🎶 Music changes SOON\nLet's just say.. high-fidelity audio, downloading, and more 🤫",
+        buttonText: "Nice!",
+        quoted: true
+      };
+    </script>
+    <script>
+      const mainModal = document.getElementById("main-modal");
+      const overlay = document.getElementById("modal-overlay");
+      const mainModalCloseBtn = document.getElementById("main-modal-close");
+
+      function createIconElement(icon) {
+        if (icon.startsWith("fa:")) {
+          const i = document.createElement("i");
+          i.className = `modal-icon ${icon.substring(3)}`;
+          return i;
+        } else {
+          const img = document.createElement("img");
+          img.src = icon;
+          img.className = "modal-icon";
+          return img;
+        }
+      }
+
+      function populateModal(modalElement, { icon, title, content, buttonText, isHtml = false, quoted = false }) {
+        const iconContainer = modalElement.querySelector('.modal-title span:first-child');
+        const titleEl = modalElement.querySelector('.modal-title span:last-child');
+        const bodyEl = modalElement.querySelector(".modal-body");
+        const buttonEl = modalElement.querySelector(".modal-button");
+
+        iconContainer.innerHTML = '';
+        if (icon) iconContainer.appendChild(createIconElement(icon));
+
+        titleEl.textContent = title;
+
+        if (isHtml) {
+          bodyEl.innerHTML = content;
+        } else if (quoted) {
+          const sections = content.split(/\n\s*\n/);
+          bodyEl.innerHTML = sections.map(block => {
+            const lines = block.split(/\n/);
+            return `<span class="quote-line">${lines.join("<br>")}</span>`;
+          }).join("<br><br>");
+        } else {
+          bodyEl.innerHTML = content
+            .split("\n")
+            .map(line => line.replace(/</g, "&lt;").replace(/>/g, "&gt;")) // escape
+            .join("<br>");
+        }
+        buttonEl.textContent = buttonText;
+      }
+
+      function showModal() {
+        mainModal.classList.add("active");
+        overlay.classList.add("active");
+      }
+
+      function hideModal() {
+        mainModal.classList.remove("active");
+        overlay.classList.remove("active");
+      }
+      
+      window.showModal = showModal;
+
+      mainModalCloseBtn.addEventListener("click", () => {
+        localStorage.setItem("savedModal", JSON.stringify(mainModalConfig));
+        hideModal();
+      });
+      
+      window.addEventListener("load", () => {
+        populateModal(mainModal, mainModalConfig);
+        const savedModal = localStorage.getItem("savedModal");
+        if (savedModal !== JSON.stringify(mainModalConfig)) {
+          showModal();
+        }
+      });
+      
+      const dynModal = document.getElementById("dyn-modal");
+      const dynModalCloseBtn = document.getElementById("dyn-modal-close");
+
+      function showDynModal(title, icon, text, btnName) {
+        populateModal(dynModal, { icon, title, content: text, buttonText: btnName });
+        dynModal.classList.add("active");
+        overlay.classList.add("active");
+      }
+      
+      function hideDynModal() {
+          dynModal.classList.remove("active");
+          overlay.classList.remove("active");
+      }
+
+      dynModalCloseBtn.addEventListener("click", hideDynModal);
+
+      window.showDynModal = showDynModal;
+
+    </script>
+  </body>
+</html>
