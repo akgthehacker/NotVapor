@@ -1,0 +1,9 @@
+{
+  "current_outages": [
+    {
+      "name": "VM Outage",
+      "description": "Rate-limited by provider. VMs possibly returning in the future.",
+      "date": "SEPT 21, 2025"
+    }
+  ]
+}
